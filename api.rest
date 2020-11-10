@@ -2,3 +2,23 @@
 GET http://localhost:3003/
 
 ###
+//projet
+
+//tours
+get http://localhost:3003/api/v1/tours
+
+###
+
+//tours
+get http://localhost:3003/api/v1/tours/3
+
+###
+
+
+//tours
+post http://localhost:3003/api/v1/tours
+content-type: application/json
+
+{
+    "test":"toto"
+}
