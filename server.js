@@ -1,30 +1,15 @@
-const express = require("express");
-const app = express();
-const morgan = require("morgan");
+const dotenv = require('dotenv');//gestion variable d'env
+dotenv.config({path:'./config.env'})
 
+const app = require('./app');
 
+//variable d'environenemt
 
-//midelwaire
-app.use(morgan("dev"));
-//parser
-app.use(express.json());
-app.use((req, res, next) => {
-    console.log("hello from the midelwaire ✋");
-    next();
-});
+//console.log(app.get('env'))
+//console.log(process.env)
 
-app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    next();
-});
-
-
-
-app.use('/api/v1/tours',require('./routes/tourRoutes'));
-app.use('/api/v1/users',require('./routes/userRoutes'));
 //-------------port--------------------------------
-const port = 3003;
-
+const port = process.env.PORT || 3003;
 //-----------------server---------------------------
 app.listen(port, () => {
     console.log(`app run well on port ${port}.... 🙂  `);
