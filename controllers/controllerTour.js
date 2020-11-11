@@ -1,54 +1,80 @@
+// const fs = require("fs");
+// const tours = JSON.parse(
+//     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+// );
 
-const fs = require("fs");
-const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
+//model
+const Tour = require("./../models/tourModel");
 
-exports.checkId = (req,res,next,value) => {
-    console.log(`Tour id is: ${value}`)
-    if (req.params.id * 1 > tours.length) {
-        return res.status(404).json({
-            status: "fail",
-            message: "Invalid id",
-        });
-    }
+////////////////////////////-----middlewre-----//////////////////////////
+//plus utile id de mongo
+exports.checkId = (req, res, next, value) => {
+    // console.log(`Tour id is: ${value}`)
+    // if (req.params.id * 1 > tours.length) {
+    //     return res.status(404).json({
+    //         status: "fail",
+    //         message: "Invalid id",
+    //     });
+    // }
     next();
-}
+};
 
-exports.checkBody = (req,res,next) => {
-    console.log(req.body)
-    if(!req.body.name || !req.body.price) {
-        return res.status(400).json({
-            status: "fail",
+exports.checkBody = (req, res, next) => {
+    // console.log(req.body)
+    // if(!req.body.name || !req.body.price) {
+    //     return res.status(400).json({
+    //         status: "fail",
+    //         data: {
+    //             message: "Missing name or price",
+    //         },
+    //     });
+    // }
+    next();
+};
+
+//////////////////////----------------CRUD------------------//////////////////
+exports.createNewTour = async (req, res) => {
+    //pour fichier
+    //console.log(req.body)
+    // const newID = tours[tours.length - 1].id + 1;
+    // const newTours = Object.assign({ id: newID }, req.body);
+
+    // tours.push(newTours);
+
+    // fs.writeFile(
+    //     `${__dirname}/dev-data/data/tours-simple.json`,
+    //     JSON.stringify(tours),
+    //     (err) => {
+    //         res.status(201).json({
+    //             status: "success",
+    //             data: {
+    //                 tour: newTours,
+    //             },
+    //         });
+    //     }
+    // );
+
+    //pour mongodb
+
+    
+    try{
+        // const newTour = new Tour({})
+        // newTour.save()
+        const newTour = await Tour.create(req.body);
+    
+        res.status(201).json({
+            status: "success",
             data: {
-                message: "Missing name or price",
+                tour: newTour,
             },
         });
+
+    }catch(err) {
+        res.status(400).json({
+            status:'fail',
+            message:'Invalid data send'
+        })
     }
-    next();
-}
-
-
-exports.createNewTour = (req, res) => {
-    //console.log(req.body)
-
-    const newID = tours[tours.length - 1].id + 1;
-    const newTours = Object.assign({ id: newID }, req.body);
-
-    tours.push(newTours);
-
-    fs.writeFile(
-        `${__dirname}/dev-data/data/tours-simple.json`,
-        JSON.stringify(tours),
-        (err) => {
-            res.status(201).json({
-                status: "success",
-                data: {
-                    tour: newTours,
-                },
-            });
-        }
-    );
 };
 
 exports.getOneTour = (req, res) => {
@@ -83,7 +109,6 @@ exports.getAllTours = (req, res) => {
     });
 };
 exports.patchTour = (req, res) => {
-
     res.status(200).json({
         status: "success",
         data: {
@@ -93,8 +118,6 @@ exports.patchTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-    
-
     res.status(204).json({
         status: "success",
         data: null,
