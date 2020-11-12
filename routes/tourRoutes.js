@@ -13,6 +13,7 @@ const tourController = require('../controllers/controllerTour')
 //if not,send the back 400
 //stact it tou the post handler stack
 
+router.route('/top-5-cheap').get(tourController.aliasTopTour,tourController.getAllTours)
 
 router.route("/")
 .get(tourController.getAllTours)
