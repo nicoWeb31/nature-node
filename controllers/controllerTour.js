@@ -107,7 +107,34 @@ exports.getAllTours = async (req, res) => {
     // console.log(req.requestTime);
 
     try {
-        const tours = await Tour.find();
+
+        //BUILD QUERY
+        //const queryObject = req.query;   //return a refernence
+        const queryObject = {...req.query};   //return a new object
+        const excludeFields = ['page', 'sort','limit', 'fields']  //champs a exclure de la query, usable for orther finks
+
+        //on suprime les fields de la query contenent nos mots reservé
+        excludeFields.forEach(field => {
+            delete queryObject[field]
+        })
+
+        //pour pouvoir chainer les differnents methode
+
+        const query = await Tour.find(queryObject);//if query is empty return all tours; else filter by query
+
+        //filter other option
+        // const tours = await tours.find()
+        //     .where('duration')
+        //     .equals(5)
+        //     .where('difficulty')
+        //     .equals('easy')
+
+        
+        //EXECTUT QUERY
+        const tours = await query;
+
+
+        //SENT RESPONSE
         res.status(200).json({
             status: "success",
             results: tours.length,
