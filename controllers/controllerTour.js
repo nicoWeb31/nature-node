@@ -1,9 +1,4 @@
-// const fs = require("fs");
-// const tours = JSON.parse(
-//     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-// );
-
-//model
+const APIFeature = require('./../utils/apiFeatures')
 const Tour = require("./../models/tourModel");
 
 ////////////////////////////-----middlewre-----//////////////////////////
@@ -32,34 +27,15 @@ exports.checkBody = (req, res, next) => {
     next();
 };
 
-
-exports.aliasTopTour =(req, res, next)=>{
-    
-} 
+exports.aliasTopTour = (req, res, next) => {
+    req.query.limit = "5";
+    req.query.sort = "-ratingsAverage,price";
+    req.query.fields = "name,price,ratingsAverage,summary,diffuculty";
+    next();
+};
 
 //////////////////////----------------CRUD------------------//////////////////
 exports.createNewTour = async (req, res) => {
-    //pour fichier
-    //console.log(req.body)
-    // const newID = tours[tours.length - 1].id + 1;
-    // const newTours = Object.assign({ id: newID }, req.body);
-
-    // tours.push(newTours);
-
-    // fs.writeFile(
-    //     `${__dirname}/dev-data/data/tours-simple.json`,
-    //     JSON.stringify(tours),
-    //     (err) => {
-    //         res.status(201).json({
-    //             status: "success",
-    //             data: {
-    //                 tour: newTours,
-    //             },
-    //         });
-    //     }
-    // );
-
-    //pour mongodb
 
     try {
         // const newTour = new Tour({})
@@ -81,15 +57,6 @@ exports.createNewTour = async (req, res) => {
 };
 
 exports.getOneTour = async (req, res) => {
-    ///"/api/v1/tours/:a/:b/:c?"point ? optionnal param
-    //console.log(req.params);
-    // const id = req.params.id * 1; //convert string to number
-    // const tour = tours.find((tour) => tour.id === id);
-
-    // // if(id > tours.length){
-    // if (!tour) {
-    //     return res.status(404).json({ sattus: "fail", message: "Forbiden" });
-    // }
 
     try {
         const tour = await Tour.findById(req.params.id);
@@ -108,77 +75,22 @@ exports.getOneTour = async (req, res) => {
     }
 };
 
+
+
 exports.getAllTours = async (req, res) => {
-    // console.log(req.requestTime);
+
     console.log(req.query);
 
     try {
-        //BUILD QUERY
-        //1) Filtering
-        //const queryObject = req.query;   //return a refernence
-        const queryObject = { ...req.query }; //return a new object
-        const excludeFields = ["page", "sort", "limit", "fields"]; //champs a exclure de la query, usable for orther finks
-
-        //on suprime les fields de la query contenent nos mots reservé
-        excludeFields.forEach((field) => delete queryObject[field]);
-
-        //1B)Advence filtering with key
-        let queryString = JSON.stringify(queryObject);
-        queryString = queryString.replace(
-            /(gte|gt|lte|lt)\b/g,
-            (match) => `$${match}`
-        ); //on rajoute le $ a nos mots clés
-        console.log(JSON.parse(queryString));
-
-        //pour pouvoir chainer les differnents methode
-        let query = Tour.find(JSON.parse(queryString));
-        //if query is empty return all tours; else filter by query //let for chain
-
-        //filter other option
-        // const tours = await tours.find()
-        //     .where('duration')
-        //     .equals(5)
-        //     .where('difficulty')
-        //     .equals('easy')
-
-        //2)Sorting
-
-        if (req.query.sort) {
-            console.log("toto");
-            // console.log(query)
-            const sortBy = req.query.sort.replace(/,/g, " ");
-            // console.log("sortBy", sortBy);
-            query = query.sort(sortBy);
-            //sort('price' raitingAverage)
-        } else {
-            query = query.sort("-createdAt");
-        }
-
-        //3) field liminting choix des champs retourner par l'api
-        if (req.query.fields) {
-            const fields = req.query.fields.replace(/,/g, " "); //je les separe par un espace pour pouvoir les passer a mon select
-            query = query.select(fields);
-        } else {
-            query = query.select("-__V"); //le moins est une exclusion ici on exclu V qui est utiliser par mongodb
-        }
-
-        //4)paginations
-        const page = req.query.page * 1 || 1;
-        const limit = req.query.limit * 1 || 100;
-
-        const skip = (page - 1) * limit;
-
-        if (req.query.page) {
-            const numTours = await Tour.countDocuments();
-            if (skip >= numTours) {
-                throw new Error("This page does not exist !!");
-            }
-        }
-        //page=2&limit=10   1-10 page1 .11-20....
-        query = query.skip(skip).limit(limit);
+ 
 
         //EXECTUT QUERY
-        const tours = await query;
+        const features = new APIFeature(Tour.find(), req.query)
+            .filter()
+            .sorting()
+            .limitFields()
+            .paginate();
+        const tours = await features.query;
 
         //SENT RESPONSE
         res.status(200).json({
