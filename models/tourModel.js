@@ -54,7 +54,17 @@ const tourShema = mongoose.Schema({
         select: false
     },
     startDates: [Date],
+},
+{
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
+
 });
+
+//data virtuel non sauvé en bdd
+tourShema.virtual('durationWeeks').get(function(){
+    return this.duration / 7;
+})
 
 const Tour = mongoose.model("Tour", tourShema);
 module.exports = Tour;
