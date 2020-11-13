@@ -14,6 +14,7 @@ const tourController = require('../controllers/controllerTour')
 //stact it tou the post handler stack
 
 router.route('/top-5-cheap').get(tourController.aliasTopTour,tourController.getAllTours)
+router.route('/tour-stats').get(tourController.getToursStats)
 
 router.route("/")
 .get(tourController.getAllTours)
