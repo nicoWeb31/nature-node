@@ -1,4 +1,4 @@
-const APIFeature = require('./../utils/apiFeatures')
+const APIFeature = require("./../utils/apiFeatures");
 const Tour = require("./../models/tourModel");
 
 ////////////////////////////-----middlewre-----//////////////////////////
@@ -36,7 +36,6 @@ exports.aliasTopTour = (req, res, next) => {
 
 //////////////////////----------------CRUD------------------//////////////////
 exports.createNewTour = async (req, res) => {
-
     try {
         // const newTour = new Tour({})
         // newTour.save()
@@ -57,7 +56,6 @@ exports.createNewTour = async (req, res) => {
 };
 
 exports.getOneTour = async (req, res) => {
-
     try {
         const tour = await Tour.findById(req.params.id);
         res.status(200).json({
@@ -75,15 +73,10 @@ exports.getOneTour = async (req, res) => {
     }
 };
 
-
-
 exports.getAllTours = async (req, res) => {
-
     console.log(req.query);
 
     try {
- 
-
         //EXECTUT QUERY
         const features = new APIFeature(Tour.find(), req.query)
             .filter()
@@ -142,33 +135,32 @@ exports.deleteTour = async (req, res) => {
     }
 };
 
-exports.getToursStats = async (req, res)=>{
+exports.getToursStats = async (req, res) => {
     try {
-        
-
         const stats = await Tour.aggregate([
             {
-                $match: {'ratingAverage': {$gte : 4.5} }
+                $match: { ratingAverage: { $gte: 4.5 } },
             },
             {
-                $group: {//groupe est un accumulateur 
+                $group: {
+                    //groupe est un accumulateur
                     // _id: null,//champ a accumulé null tous
-                    _id: {$toUpper: '$difficulty'},
-                    numTours: {$sum : 1},
-                    numRatings: {$sum: '$ratingsQuantity'},
-                    avrRatting :{$avg: '$ratingAverage'},//ici je veut la moyenne de tout les tours dans une npuvelle variable avrRatting
-                    averPrice: {$avg: '$price'},
-                    minPrice: {$min: '$price'},
-                    maxPrice: {$max: '$price'}
-                }
+                    _id: { $toUpper: "$difficulty" },
+                    numTours: { $sum: 1 },
+                    numRatings: { $sum: "$ratingsQuantity" },
+                    avrRatting: { $avg: "$ratingAverage" }, //ici je veut la moyenne de tout les tours dans une npuvelle variable avrRatting
+                    averPrice: { $avg: "$price" },
+                    minPrice: { $min: "$price" },
+                    maxPrice: { $max: "$price" },
+                },
             },
             {
-                $sort: {averPrice: 1}
-            }
+                $sort: { averPrice: 1 },
+            },
             // {
             //     $match: {_id: {$ne: 'EASY'}}//ne not equal
             // }
-        ])
+        ]);
 
         res.status(200).json({
             status: "success",
@@ -176,11 +168,63 @@ exports.getToursStats = async (req, res)=>{
                 stats,
             },
         });
-
     } catch (error) {
         res.status(404).json({
             status: "fail",
             message: error,
         });
     }
-}
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+    try {
+        const year = req.params.year * 1;
+
+        const plan = await Tour.aggregate([
+            {
+                $unwind: "$startDates", //decompose le tableau de date et revenvoi un ogbjet complet par date
+            },
+            {
+                $match: {
+                    startDates: {
+                        $gte: new Date(`${year}-01-01`),
+                        $lte: new Date(`${year}-12-31`),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: { $month: "$startDates" },
+                    numTourStarts: { $sum: 1 },
+                    tours: { $push: "$name" },
+                },
+            },
+            {
+                $addFields: { month: "$_id" },
+            },
+            {
+                $project: {
+                    _id : 0
+                }
+            },
+            {
+                $sort:{ numTourStarts : -1 },
+            },
+            {
+                $limit : 12
+            }
+        ]);
+
+        res.status(200).json({
+            status: "success",
+            data: {
+                plan,
+            },
+        });
+    } catch (error) {
+        res.status(404).json({
+            status: "fail",
+            message: error,
+        });
+    }
+};
