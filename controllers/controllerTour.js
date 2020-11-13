@@ -1,6 +1,7 @@
 const APIFeature = require("./../utils/apiFeatures");
 const Tour = require("./../models/tourModel");
 
+
 ////////////////////////////-----middlewre-----//////////////////////////
 //plus utile id de mongo
 exports.checkId = (req, res, next, value) => {
@@ -50,7 +51,7 @@ exports.createNewTour = async (req, res) => {
     } catch (err) {
         res.status(400).json({
             status: "fail",
-            message: "Invalid data send",
+            message: err,
         });
     }
 };
