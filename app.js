@@ -30,6 +30,15 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours',require('./routes/tourRoutes'));
 app.use('/api/v1/users',require('./routes/userRoutes'));
 
+//autres route 404
+app.all('*',function(req,res,next){
+    res.status(404).json({
+        status: 'fail',
+        message:`Can't find ${req.originalUrl} on this server !`
+    });
+})
+
+
 
 
 module.exports = app
