@@ -23,6 +23,7 @@ const userShema = new Shema({
         type: String,
         required: [true, "Please provide a password !"],
         minlength: 8,
+        select: false //on veut pas get le password
     },
     passwordConfirm: {
         type: String,
@@ -49,6 +50,14 @@ userShema.pre('save',async function(next){
 
     next();
 })
+
+
+//on rajouter une methods...treturn true si les passwords match
+userShema.methods.correctPassword = async function(candidatePassword,userPassword) {
+
+    return await bcrypt.compare(candidatePassword,userPassword);
+
+}
 
 
 const User = mongoose.model("User", userShema);
