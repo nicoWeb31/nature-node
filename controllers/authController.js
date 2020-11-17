@@ -19,6 +19,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
+        role: req.body.role
     });
 
     const token =  signToken(newUser._id)
@@ -77,18 +78,48 @@ exports.protect = catchAsync(async (req, res, next)=>{
 
     //3)chek if user still exists
 
-    const freshUser = await User.findById(decoded.id);
-    if(!freshUser){
+    const currentUser = await User.findById(decoded.id);
+    if(!currentUser){
         return next( new AppErr('the user beloging to this token does no longer exist',401) );
     }
 
     //4) check if user user changed passord after the token was issued 
 
-    if(freshUser.changePassAflter(decoded.iat)){
+    if(currentUser.changePassAflter(decoded.iat)){
         return next(new AppErr('user recently change password! please login again.', 401))
     }
 
     //grant access to protected route
-    req.user = freshUser;
+    req.user = currentUser;//on passe le current user au middleware suivant !
     next();
 });
+
+exports.restrictTo = (...roles) =>(req, res, next) => {
+    //role is an array['admin','lead-guide'] role  = 'user'
+    if(!roles.includes(req.user.role)){
+        return next(new AppErr('You do not have permission to perform this action', 403));
+    }
+
+    next();
+}
+
+exports.forgotPassword = catchAsync(async(req, res, next) => {
+
+   //1) Get user based on posted email
+    const user = await User.findOne({ email: req.body.email });
+
+    if(!user){
+        return next(AppErr('There is no user with this email adress !', 404));
+    }
+
+    //2)generate the random token and send
+    const reseToken = user.createPasswordResetToken();
+    await user.save({validateBeforeSave: false});
+
+    //3)send it to user's email
+
+});
+
+exports.resetPassword = (req, res, next) => {
+
+}

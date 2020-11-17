@@ -1,4 +1,5 @@
 const validator = require("validator");
+const crypto = require('crypto');
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Shema = mongoose.Schema;
@@ -19,6 +20,11 @@ const userShema = new Shema({
     photo: {
         type: String,
     },
+    role: {
+        type: String,
+        enum:['admin','user','guide','lead-guide'],
+        default:'user'
+    },
     password: {
         type: String,
         required: [true, "Please provide a password !"],
@@ -36,7 +42,9 @@ const userShema = new Shema({
             message: "Password doesn't match !!",
         },
     },
-    passwordChangeAt: Date
+    passwordChangeAt: Date,
+    passwordRestToken: String,
+    passwordRestExpires: Date
 });
 
 
@@ -68,6 +76,16 @@ userShema.methods.changePassAflter = function(JWTTimestamp){
     
     //false mean not change
     return false
+}
+
+userShema.methods.createPasswordResetToken = function(){
+    const resToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordRestToken = crypto.createHash('sha256').update(resToken).digest('hex');
+
+    this.passwordRestExpires = Date.now() + 10 *60 * 1000;
+
+    return resToken;
 }
 
 
