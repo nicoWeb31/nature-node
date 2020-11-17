@@ -3,6 +3,7 @@ const {promisify} = require('util');
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppErr = require('./../utils/AppErr');
+const sendEmail = require('./../utils/email')
 // const bcrypt = require('bcryptjs')
 
 const signToken = id =>{
@@ -117,9 +118,39 @@ exports.forgotPassword = catchAsync(async(req, res, next) => {
     await user.save({validateBeforeSave: false});
 
     //3)send it to user's email
+    const resetUrl = `${req.protocol}://${req.host}/api/v1/users/resetPassord/${reseToken}`;
+
+    const message = `Forgot your password ? Submit a PATCH request with your new password and passwordConfirm to : ${resetUrl}...If you didn't forgot your password, 
+    please ignore this email`;
+
+    try {
+
+        await sendEmail({
+            email : user.email,
+            subject: 'your password reset token (valid 10m)',
+            message,
+        });
+
+    } catch (error) {
+        
+        user.passwordRestToken = undefined;
+        user.passwordRestExpires = undefined;
+        await user.save({validateBeforeSave: false});
+
+        return next(new AppErr('There was an error sending the email. Try again later.',500))
+    }
+    
+        
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Token send to your email !!!'
+    })
+
+
 
 });
 
-exports.resetPassword = (req, res, next) => {
+// exports.resetPassword = (req, res, next) => {
 
-}
+// }
