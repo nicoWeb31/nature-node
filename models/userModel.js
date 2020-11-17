@@ -36,6 +36,7 @@ const userShema = new Shema({
             message: "Password doesn't match !!",
         },
     },
+    passwordChangeAt: Date
 });
 
 
@@ -56,8 +57,19 @@ userShema.pre('save',async function(next){
 userShema.methods.correctPassword = async function(candidatePassword,userPassword) {
 
     return await bcrypt.compare(candidatePassword,userPassword);
-
 }
+
+userShema.methods.changePassAflter = function(JWTTimestamp){
+    
+    if(this.passwordChangeAt){
+        const changeTimestamp = parseInt(this.passwordChangeAt.getTime() / 1000, 10);
+        return JWTTimestamp < changeTimestamp ; 
+    }
+    
+    //false mean not change
+    return false
+}
+
 
 
 const User = mongoose.model("User", userShema);
