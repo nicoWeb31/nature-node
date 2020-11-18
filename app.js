@@ -2,14 +2,21 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const AppErr = require('./utils/AppErr')
+const rateLimit = require('express-rate-limit');
 
 
 
-//midelwaire
+// GLOBAL midelwaire
 if(process.env.NODE_ENV !== "production") {
     app.use(morgan("dev"));
 }
-
+//limiter le nbre de requet---securité-----
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too  many requests from this IP, please try again !'
+})
+app.use('/api',limiter);
 
 //parser
 app.use(express.json());
