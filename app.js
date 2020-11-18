@@ -3,13 +3,20 @@ const app = express();
 const morgan = require("morgan");
 const AppErr = require('./utils/AppErr')
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 
 
 // GLOBAL midelwaire
+//set security http header
+app.use(helmet())
+
+
+//env morgan info request
 if(process.env.NODE_ENV !== "production") {
     app.use(morgan("dev"));
 }
+
 //limiter le nbre de requet---securité-----
 const limiter = rateLimit({
     max: 100,
@@ -18,16 +25,22 @@ const limiter = rateLimit({
 })
 app.use('/api',limiter);
 
-//parser
-app.use(express.json());
+
+
+//parser limit for security
+app.use(express.json({limit: '10kb'}));
+
+
 //servir les fichire statics
 app.use(express.static(`${__dirname}/public`));
 
+//test middleware
 app.use((req, res, next) => {
     console.log("hello from the midelwaire ✋");
     next();
 });
 
+//test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
