@@ -6,10 +6,14 @@ const authController = require('./../controllers/authController');
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 
-router.post('/forgotPasswort', authController.forgotPassword);
+router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassord/:token', authController.resetPassword);
 
 router.patch('/updateMyPassword',authController.protect,authController.upadtePassword)
+router.patch('/updateMe',authController.protect,userController.updateMe)
+router.delete('/deleteMe',authController.protect,userController.deleteMe)
+
+
 
 
 router.route("/")

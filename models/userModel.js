@@ -44,6 +44,11 @@ const userShema = new Shema({
     passwordChangeAt: Date,
     passwordRestToken: String,
     passwordRestExpires: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false, //on veut pas que le fielde soit accessible
+    },
 });
 
 //mongose middleware, pre-save for passwordencrypte
@@ -80,9 +85,16 @@ userShema.methods.changePassAflter = function (JWTTimestamp) {
 };
 
 userShema.pre("save", function (next) {
-    if (!this.isModified("password") || this.isNew) return next();//Returns true if this document was modified, else false.
+    if (!this.isModified("password") || this.isNew) return next(); //Returns true if this document was modified, else false.
     this.passwordChangeAt = Date.now() - 1000;
-    next()
+    next();
+});
+
+//montre que les documents actif
+userShema.pre(/^find/, function (next) {
+    //this points to this current querry
+    this.find({ active: { $ne: false } });
+    next();
 });
 
 userShema.methods.createPasswordResetToken = function () {
