@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const AppErr = require('./utils/AppErr')
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const mongoSanitize = require('mongo-sanitize');
+const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
@@ -42,7 +42,7 @@ app.use(mongoSanitize())
 app.use(xss())
 
 //http-- prevent param polution, si plusieur param prend en compte le dernier
-app.use(http({
+app.use(hpp({
     whiteList : [
         'duration',
         'price',

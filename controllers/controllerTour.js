@@ -51,7 +51,14 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
 });
 
 exports.getOneTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findById(req.params.id);
+
+    //with populate firds guides
+    const tour = await await Tour.findById(req.params.id)
+    //add to query middleware
+    // .populate({
+    //     path: 'guides',
+    //     select: '-__v passwordChangeAt'
+    // });
 
     if(!tour){
         return next(new AppErr('no tour found with that ID ! ',404))
