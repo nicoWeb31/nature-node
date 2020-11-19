@@ -73,6 +73,8 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/tours',require('./routes/tourRoutes'));
 app.use('/api/v1/users',require('./routes/userRoutes'));
+app.use('/api/v1/reviews',require('./routes/reviewsRoutes'));
+
 
 //autres route 404
 app.all('*',function(req,res,next){
