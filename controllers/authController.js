@@ -19,12 +19,14 @@ const createSendToken = (user, statusCode, res) => {
 
     //cookie token
     const cookieOptions = {
-        expires: new Date( Date.now() + process.env.JWT_COOKIE_EXPIRE_IN *24*60*60* 1000) ,
+        expires: new Date(
+            Date.now() + process.env.JWT_COOKIE_EXPIRE_IN * 24 * 60 * 60 * 1000
+        ),
         httpOnly: true,
-    }
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+    };
+    if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
-    res.cookie('jwt',token, cookieOptions);
+    res.cookie("jwt", token, cookieOptions);
 
     //remove the password from the outpout..
     user.password = undefined;
@@ -36,7 +38,7 @@ const createSendToken = (user, statusCode, res) => {
             user: user,
         },
     });
-}
+};
 
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
@@ -47,8 +49,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         role: req.body.role,
     });
 
-    createSendToken(newUser, 201, res)
-
+    createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -68,11 +69,11 @@ exports.login = catchAsync(async (req, res, next) => {
     }
 
     //3) if everything is ok ,sent token to client
-    createSendToken(user, 200, res)
+    createSendToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-    console.log('PROTECT ROUTE MIDDLEWAIRE')
+    console.log("PROTECT ROUTE MIDDLEWAIRE");
     //console.log(req.headers)
     let token;
     //1)Getting token and chrck if is exist in the header
@@ -137,7 +138,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-        return next( new AppErr("There is no user with this email adress !", 404));
+        return next(
+            new AppErr("There is no user with this email adress !", 404)
+        );
     }
 
     //2)generate the random token and send
@@ -201,21 +204,24 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     //3 update changePasswordAt property for the user
 
     //4 log the user in send Jwt
-    createSendToken(user,201, res)
-
+    createSendToken(user, 201, res);
 });
-
 
 //for log-in users
 exports.upadtePassword = catchAsync(async (req, res, next) => {
     // console.log(req.user)
     //1 get user from database
-    const currentUser = await User.findById(req.user.id).select('+password');
+    const currentUser = await User.findById(req.user.id).select("+password");
     // console.log("currentUser", currentUser)
 
     //2 check is posted current password is correct
-    if (!(await currentUser.correctPassword(req.body.passwordCurrent, currentUser.password))) {
-        return next(new AppErr('Your current password is incorrect', 401));
+    if (
+        !(await currentUser.correctPassword(
+            req.body.passwordCurrent,
+            currentUser.password
+        ))
+    ) {
+        return next(new AppErr("Your current password is incorrect", 401));
     }
 
     //3) if so, update password
@@ -224,7 +230,5 @@ exports.upadtePassword = catchAsync(async (req, res, next) => {
     await currentUser.save();
 
     //4) Log user in, and send jwt
-    createSendToken(currentUser,200, res)
-
-
+    createSendToken(currentUser, 200, res);
 });
