@@ -128,6 +128,16 @@ const tourShema = mongoose.Schema(
     }
 );
 
+
+//virtuals populate
+tourShema.virtual('reviews',{
+    ref : 'Review',
+    localField: '_id',
+    foreignField: 'tour',
+    justOne: true
+
+})
+
 //data virtuel non sauvé en bdd
 tourShema.virtual("durationWeeks").get(function () {
     return this.duration / 7;
@@ -177,7 +187,7 @@ tourShema.pre(/^find/, function (next) {
     this.populate({
         path: 'guides',
         select: '-__v passwordChangeAt'
-    });
+    })
 
     next();
 })

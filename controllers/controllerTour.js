@@ -53,7 +53,7 @@ exports.createNewTour = catchAsync(async (req, res, next) => {
 exports.getOneTour = catchAsync(async (req, res, next) => {
 
     //with populate firds guides
-    const tour = await await Tour.findById(req.params.id)
+    const tour = await await Tour.findById(req.params.id).populate('reviews');
     //add to query middleware
     // .populate({
     //     path: 'guides',
