@@ -71,6 +71,12 @@ userShema.methods.correctPassword = async function (
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
+userShema.pre("save", function (next) {
+    if (!this.isModified("password") || this.isNew) return next(); //Returns true if this document was modified, else false.
+    this.passwordChangeAt = Date.now() - 1000;
+    next();
+});
+
 userShema.methods.changePassAflter = function (JWTTimestamp) {
     if (this.passwordChangeAt) {
         const changeTimestamp = parseInt(
@@ -83,12 +89,6 @@ userShema.methods.changePassAflter = function (JWTTimestamp) {
     //false mean not change
     return false;
 };
-
-userShema.pre("save", function (next) {
-    if (!this.isModified("password") || this.isNew) return next(); //Returns true if this document was modified, else false.
-    this.passwordChangeAt = Date.now() - 1000;
-    next();
-});
 
 //montre que les documents actif
 userShema.pre(/^find/, function (next) {

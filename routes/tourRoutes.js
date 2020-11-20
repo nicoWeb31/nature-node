@@ -29,17 +29,17 @@ const tourController = require('../controllers/controllerTour')
 
 router.route('/top-5-cheap').get(tourController.aliasTopTour,tourController.getAllTours)
 router.route('/tour-stats').get(tourController.getToursStats)
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan)
+router.route('/monthly-plan/:year').get(authController.protect, authController.restrictTo('admin','lead-guide','guide'),tourController.getMonthlyPlan)
 
 
 router.route("/")
-.get(authController.protect,tourController.getAllTours)
-.post(tourController.checkBody,tourController.createNewTour);
+.get(tourController.getAllTours)
+.post(authController.protect, authController.restrictTo('admin','lead-guide'),tourController.checkBody,tourController.createNewTour);
 
 router.route("/:id")
 .get(tourController.getOneTour)
 .delete(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.deleteTour)
-.patch(tourController.patchTour);
+.patch(authController.protect,authController.restrictTo('admin','lead-guide'),tourController.patchTour);
 
 
 
