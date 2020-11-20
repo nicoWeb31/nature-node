@@ -39,17 +39,19 @@ exports.aliasTopTour = (req, res, next) => {
 };
 
 //////////////////////----------------CRUD------------------//////////////////
-exports.createNewTour = catchAsync(async (req, res, next) => {
+// exports.createNewTour = catchAsync(async (req, res, next) => {
 
-    const newTour = await Tour.create(req.body);
+//     const newTour = await Tour.create(req.body);
 
-    res.status(201).json({
-        status: "success",
-        data: {
-            tour: newTour,
-        },
-    });
-});
+//     res.status(201).json({
+//         status: "success",
+//         data: {
+//             tour: newTour,
+//         },
+//     });
+// });
+// with factory
+exports.createNewTour = factory.createNewDoc(Tour)
 
 exports.getOneTour = catchAsync(async (req, res, next) => {
 
@@ -100,24 +102,26 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     });
 });
 
-exports.patchTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-        new: true, //return the new document
-        runValidators: true, //doit utiliser notre shema
-    });
+// exports.patchTour = catchAsync(async (req, res, next) => {
+//     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//         new: true, //return the new document
+//         runValidators: true, //doit utiliser notre shema
+//     });
 
 
-    if(!tour){
-        return next(new AppErr('no tour found with that ID ! ',404))
-    }
+//     if(!tour){
+//         return next(new AppErr('no tour found with that ID ! ',404))
+//     }
 
-    res.status(200).json({
-        status: "success",
-        data: {
-            tour,
-        },
-    });
-});
+//     res.status(200).json({
+//         status: "success",
+//         data: {
+//             tour,
+//         },
+//     });
+// });
+// with factory
+exports.patchTour = factory.updateOne(Tour)
 
 // exports.deleteTour = catchAsync(async (req, res, next) => {
 //     const tour = await Tour.findByIdAndDelete(req.params.id);

@@ -62,12 +62,13 @@ exports.deleteMe = catchAsync(async(req, res, next) => {
     })
 })
 
-exports.createUsers = (req, res) => {
-    res.status(500).json({
-        status: "error",
-        message: "route is not defined",
-    });
-};
+// exports.createUsers = (req, res) => {
+//     res.status(500).json({
+//         status: "error",
+//         message: "route is not defined",
+//     });
+// };
+exports.createUsers = factory.createNewDoc(User)
 
 // exports.deleteUser = (req, res) => {
 //     res.status(500).json({
@@ -77,12 +78,14 @@ exports.createUsers = (req, res) => {
 // };
 exports.deleteUser = factory.deleteOne(User)
 
-exports.patchUser = (req, res) => {
-    res.status(500).json({
-        status: "error",
-        message: "route is not defined",
-    });
-};
+// exports.patchUser = (req, res) => {
+//     res.status(500).json({
+//         status: "error",
+//         message: "route is not defined",
+//     });
+// };
+//do not update password with this!!!
+exports.patchUser = factory.updateOne(User)
 
 exports.getOneUser = (req, res) => {
     res.status(500).json({
