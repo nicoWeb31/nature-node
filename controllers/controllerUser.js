@@ -17,7 +17,7 @@ const filterObj =(obj, ...allowedFields)=>{
 
 //recupere les infos du current user, on utilise get one mais avec l'id provenent du current user
 exports.getMe = (req,res,next) => {
-    req.params.id = req.user._id
+    req.params.id = req.user.id
     next();
 }
 

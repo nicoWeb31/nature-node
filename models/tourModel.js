@@ -128,6 +128,11 @@ const tourShema = mongoose.Schema(
     }
 );
 
+//tourShema.index =({ price : 1})
+tourShema.index =({ price: 1, ratingAverage : -1})
+tourShema.index = ({slug: -1})
+
+
 
 //virtuals populate
 tourShema.virtual('reviews',{
@@ -186,7 +191,7 @@ tourShema.pre(/^find/, function (next) {
 
     this.populate({
         path: 'guides',
-        select: '-__v passwordChangeAt'
+        // select: '-__v passwordChangeAt'
     })
 
     next();
@@ -213,6 +218,8 @@ tourShema.pre("aggregate", function (next) {
     console.log(this); //fait reference a l'aggregate
     next();
 });
+
+
 
 const Tour = mongoose.model("Tour", tourShema);
 module.exports = Tour;
