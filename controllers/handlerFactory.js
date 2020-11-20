@@ -1,5 +1,6 @@
 const  catchAsync  = require('./../utils/catchAsync')
 const AppErr = require("./../utils/AppErr");
+const APIFeature = require('./../utils/apiFeatures')
 
 //GENERALIZATION DES METHODE
 
@@ -47,6 +48,54 @@ exports.createNewDoc = Model => catchAsync(async (req, res, next) => {
         status: "success",
         data: {
             document : newDoc,
+        },
+    });
+});
+
+//GET ONE document
+
+exports.getOne = (Model, popOptions)=>catchAsync(async (req, res, next) => {
+
+    let query = Model.findById(req.params.id);
+
+    if(popOptions) query = query.populate(popOptions);
+
+    const doc = await query;
+
+    if(!doc){
+        return next(new AppErr('no document found with that ID ! ',404))
+    }
+
+    res.status(200).json({
+        status: "success",
+        results: doc.length,
+        data: {
+            data : doc
+        },
+    });
+});
+
+//GET ALL document
+exports.getAll = Model =>catchAsync(async (req, res, next) => {
+
+    //to allow for nested get reviews on tour
+    let filter = {};
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    //EXECTUT QUERY
+    const features = new APIFeature(Model.find(filter), req.query)
+        .filter()
+        .sorting()
+        .limitFields()
+        .paginate();
+    const doc = await features.query;
+
+    //SENT RESPONSE
+    res.status(200).json({
+        status: "success",
+        results: doc.length,
+        data: {
+            data: doc,
         },
     });
 });

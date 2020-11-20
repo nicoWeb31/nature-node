@@ -1,9 +1,7 @@
-const APIFeature = require("./../utils/apiFeatures");
 const Tour = require("./../models/tourModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppErr = require("./../utils/AppErr");
-const factory = require("./handlerFactory")
-
+const factory = require("./handlerFactory");
 
 ////////////////////////////-----middlewre-----//////////////////////////
 //plus utile id de mongo
@@ -51,63 +49,65 @@ exports.aliasTopTour = (req, res, next) => {
 //     });
 // });
 // with factory
-exports.createNewTour = factory.createNewDoc(Tour)
+exports.createNewTour = factory.createNewDoc(Tour);
 
-exports.getOneTour = catchAsync(async (req, res, next) => {
+// exports.getOneTour = catchAsync(async (req, res, next) => {
 
-    //with populate firds guides
-    const tour = await await Tour.findById(req.params.id).populate('reviews');
-    //add to query middleware
-    // .populate({
-    //     path: 'guides',
-    //     select: '-__v passwordChangeAt'
-    // });
+//     //with populate firds guides
+//     const tour = await await Tour.findById(req.params.id).populate('reviews');
+//     //add to query middleware
+//     // .populate({
+//     //     path: 'guides',
+//     //     select: '-__v passwordChangeAt'
+//     // });
 
-    if(!tour){
-        return next(new AppErr('no tour found with that ID ! ',404))
-    }
+//     if(!tour){
+//         return next(new AppErr('no tour found with that ID ! ',404))
+//     }
 
-    res.status(200).json({
-        status: "success",
-        results: tour.length,
-        data: {
-            tour,
-        },
-    });
-    // try {
-        
-        
-    // } catch (error) {
-    //     res.status(404).json({message : 'error get one'})
-    // }
-});
+//     res.status(200).json({
+//         status: "success",
+//         results: tour.length,
+//         data: {
+//             tour,
+//         },
+//     });
+//     // try {
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-    console.log(req.query);
-    //EXECTUT QUERY
-    const features = new APIFeature(Tour.find(), req.query)
-        .filter()
-        .sorting()
-        .limitFields()
-        .paginate();
-    const tours = await features.query;
+//     // } catch (error) {
+//     //     res.status(404).json({message : 'error get one'})
+//     // }
+// });
 
-    //SENT RESPONSE
-    res.status(200).json({
-        status: "success",
-        results: tours.length,
-        data: {
-            tours,
-        },
-    });
-});
+exports.getOneTour = factory.getOne(Tour, "reviews");
+
+// exports.getAllTours = catchAsync(async (req, res, next) => {
+//     console.log(req.query);
+//     //EXECTUT QUERY
+//     const features = new APIFeature(Tour.find(), req.query)
+//         .filter()
+//         .sorting()
+//         .limitFields()
+//         .paginate();
+//     const tours = await features.query;
+
+//     //SENT RESPONSE
+//     res.status(200).json({
+//         status: "success",
+//         results: tours.length,
+//         data: {
+//             tours,
+//         },
+//     });
+// });
+// with factory
+exports.getAllTours = factory.getAll(Tour)
 
 // exports.patchTour = catchAsync(async (req, res, next) => {
 //     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
 //         new: true, //return the new document
 //         runValidators: true, //doit utiliser notre shema
 //     });
-
 
 //     if(!tour){
 //         return next(new AppErr('no tour found with that ID ! ',404))
@@ -121,11 +121,11 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 //     });
 // });
 // with factory
-exports.patchTour = factory.updateOne(Tour)
+exports.patchTour = factory.updateOne(Tour);
 
 // exports.deleteTour = catchAsync(async (req, res, next) => {
 //     const tour = await Tour.findByIdAndDelete(req.params.id);
-    
+
 //     if(!tour){
 //         return next(new AppErr('no tour found with that ID ! ',404))
 //     }
@@ -135,8 +135,8 @@ exports.patchTour = factory.updateOne(Tour)
 //         data: null,
 //     });
 // });
-// with factory : 
-exports.deleteTour = factory.deleteOne(Tour)
+// with factory :
+exports.deleteTour = factory.deleteOne(Tour);
 
 //agregation
 exports.getToursStats = catchAsync(async (req, res, next) => {

@@ -15,18 +15,27 @@ const filterObj =(obj, ...allowedFields)=>{
 }
 
 
-exports.getAllUsuers = catchAsync(async(req, res,next) => {
+//recupere les infos du current user, on utilise get one mais avec l'id provenent du current user
+exports.getMe = (req,res,next) => {
+    req.params.id = req.user._id
+    next();
+}
 
-    const users = await User.find();
 
-    res.status(200).json({
-        status: "success",
-        results: users.length,
-        data:{
-            users
-        }
-    });
-});
+// exports.getAllUsuers = catchAsync(async(req, res,next) => {
+
+//     const users = await User.find();
+
+//     res.status(200).json({
+//         status: "success",
+//         results: users.length,
+//         data:{
+//             users
+//         }
+//     });
+// });
+// with factory
+exports.getAllUsuers = factory.getAll(User);
 
 
 exports.updateMe = catchAsync(async (req, res, next) => {
@@ -62,13 +71,13 @@ exports.deleteMe = catchAsync(async(req, res, next) => {
     })
 })
 
-// exports.createUsers = (req, res) => {
-//     res.status(500).json({
-//         status: "error",
-//         message: "route is not defined",
-//     });
-// };
-exports.createUsers = factory.createNewDoc(User)
+exports.createUsers = (req, res) => {
+    res.status(500).json({
+        status: "error",
+        message: "route is not defined ! please use /signup instead",
+    });
+};
+
 
 // exports.deleteUser = (req, res) => {
 //     res.status(500).json({
@@ -87,9 +96,10 @@ exports.deleteUser = factory.deleteOne(User)
 //do not update password with this!!!
 exports.patchUser = factory.updateOne(User)
 
-exports.getOneUser = (req, res) => {
-    res.status(500).json({
-        status: "error",
-        message: "route is not defined",
-    });
-};
+// exports.getOneUser = (req, res) => {
+//     res.status(500).json({
+//         status: "error",
+//         message: "route is not defined",
+//     });
+// };
+exports.getOneUser = factory.getOne(User)
