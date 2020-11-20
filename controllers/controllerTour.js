@@ -205,6 +205,8 @@ exports.getDistances = catchAsync(async (req, res, next) => {
     const { latlng, unit } = req.params;
     const [lat, lng] = latlng.split(",");
 
+    const multiply = unit === 'mi' ? 0.000621371 : 0.001
+
     if (!lat || !lng) {
         return next(
             new AppErr("please provide latitude and logitue in the format", 400)
@@ -219,7 +221,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
                     coordinates: [lng * 1, lat * 1],
                 },
                 distanceField: "distance",
-                distanceMultiplier: 0.001,
+                distanceMultiplier: multiply,
             },
         },
         {
