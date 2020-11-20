@@ -53,6 +53,8 @@ reviewsShema.pre(/^find/, function (next) {
     next();
 });
 
+reviewsShema.index({tour: 1, user: 1}, {unique: true})
+
 reviewsShema.statics.calcuAverageRatings = async function (tourId) {
     const stats = await this.aggregate([
         {

@@ -20,7 +20,8 @@ const app = require('./app');
 const db = process.env.DATABASE.replace('<PASSWORD>',process.env.DATABASE_PASSWORD)
 mongoose.connect(db,{
     useNewUrlParser: true,
-    useUnifiedTopology: true 
+    useUnifiedTopology: true,
+    autoIndex: true,
 }).then(con=>{
     //console.log(con.connections)
     console.log('connect to mongodb 🙂 ')
