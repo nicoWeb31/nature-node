@@ -130,8 +130,9 @@ const tourShema = mongoose.Schema(
 );
 
 //tourShema.index =({ price : 1})
-tourShema.index =({ price: 1, ratingAverage : -1})
-tourShema.index = ({slug: -1})
+tourShema.index({ price: 1, ratingAverage : -1})
+tourShema.index({slug: -1})
+tourShema.index({startLocation : '2dsphere'})
 
 
 
@@ -214,11 +215,11 @@ tourShema.post(/^find/, function (docs, next) {
 });
 
 //AGGREGATION MIDDLEWARE
-tourShema.pre("aggregate", function (next) {
-    this.pipeline().unshift({ $match: { secreteTour: { $ne: true } } });
-    console.log(this); //fait reference a l'aggregate
-    next();
-});
+// tourShema.pre("aggregate", function (next) {
+//     this.pipeline().unshift({ $match: { secreteTour: { $ne: true } } });
+//     console.log(this); //fait reference a l'aggregate
+//     next();
+// });
 
 
 
