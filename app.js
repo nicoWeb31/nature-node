@@ -7,8 +7,17 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const path = require("path");
+
+
+//views engine
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
 // GLOBAL midelwaire
+//servir les fichire statics
+app.set(express.static(path.join(__dirname, "public")));
+
 //set security http header
 app.use(helmet());
 
@@ -48,9 +57,6 @@ app.use(
     })
 );
 
-//servir les fichire statics
-app.use(express.static(`${__dirname}/public`));
-
 //test middleware
 app.use((req, res, next) => {
     console.log("hello from the midelwaire ✋");
@@ -63,8 +69,12 @@ app.use((req, res, next) => {
     next();
 });
 
+//------------------ROUTE RENDER -------------------------------
+app.get("/", (req, res) => {
+    res.status(200).render("base");
+});
 
-//------------------ROUTES---------------------------
+//------------------ROUTES Api---------------------------
 app.use("/api/v1/tours", require("./routes/tourRoutes"));
 app.use("/api/v1/users", require("./routes/userRoutes"));
 app.use("/api/v1/reviews", require("./routes/reviewsRoutes"));
