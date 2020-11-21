@@ -16,7 +16,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // GLOBAL midelwaire
 //servir les fichire statics
-app.set(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 //set security http header
 app.use(helmet());
@@ -71,7 +71,10 @@ app.use((req, res, next) => {
 
 //------------------ROUTE RENDER -------------------------------
 app.get("/", (req, res) => {
-    res.status(200).render("base");
+    res.status(200).render("base",{
+        tour: 'The forest ',
+        user: 'toto'
+    });
 });
 
 //------------------ROUTES Api---------------------------
