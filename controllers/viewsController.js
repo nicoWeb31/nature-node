@@ -26,7 +26,11 @@ exports.getOneTour = catchAsync(async(req, res) => {
     // console.log("🚀 ~ file: viewsController.js ~ line 26 ~ tour ~ tour", tour.reviews.user)
 
 
-    res.status(200).render("tour", {
+    res.status(200)
+    .set(
+        'Content-Security-Policy',
+        'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com')
+        .render("tour", {
         title: `${tour.name} Tour`,
         tour
     });
