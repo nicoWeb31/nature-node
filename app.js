@@ -70,25 +70,7 @@ app.use((req, res, next) => {
 });
 
 //------------------ROUTE RENDER -------------------------------
-app.get("/", (req, res) => {
-    res.status(200).render("base",{
-        tour: 'The forest ',
-        user: 'toto'
-    });
-});
-
-app.get('/overview', (req, res) => {
-    res.status(200).render("overview",{
-        title: 'All tours'
-    })
-})
-
-app.get('/tour', (req, res) => {
-    res.status(200).render("tour",{
-        title: 'The forest hiker'
-    })
-})
-
+app.use("/", require("./routes/viewsRoute"))
 
 //------------------ROUTES Api---------------------------
 app.use("/api/v1/tours", require("./routes/tourRoutes"));
