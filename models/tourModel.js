@@ -140,8 +140,7 @@ tourShema.index({startLocation : '2dsphere'})
 tourShema.virtual('reviews',{
     ref : 'Review',
     localField: '_id',
-    foreignField: 'tour',
-    justOne: true
+    foreignField: 'tour'
 
 })
 

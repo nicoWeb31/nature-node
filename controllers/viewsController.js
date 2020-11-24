@@ -23,6 +23,7 @@ exports.getOneTour = catchAsync(async(req, res) => {
         path: 'reviews',
         fields: 'review rating user'
     })
+    console.log("🚀 ~ file: viewsController.js ~ line 26 ~ tour ~ tour", tour.reviews.user)
 
 
     res.status(200).render("tour", {
