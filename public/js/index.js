@@ -1,6 +1,6 @@
 import { login,logout } from "./login";
 import { displayMap } from "./mapBox";
-import { updateUser } from './updateSettings'
+import { updateSettings } from './updateSettings'
 
 import "@babel/polyfill";
 
@@ -11,6 +11,7 @@ const mapBox = document.getElementById("map");
 const loginForm = document.querySelector(".formMod");
 const logoutButton = document.querySelector(".nav__el--logout");
 const formSettings = document.querySelector(".form-user-data");
+const formPasswordSettings = document.querySelector(".form-user-settings");
 
 //delegation
 if (mapBox) {
@@ -41,6 +42,19 @@ if(formSettings){
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
 
-        updateUser(name, email);
+        updateSettings({name, email},'data');
+    })
+}
+
+if(formPasswordSettings){
+    formPasswordSettings.addEventListener("submit", (e)=>{
+        e.preventDefault();
+
+        const passwordCurrent = document.getElementById("password-current").value;
+        const password = document.getElementById("password").value;
+        const passwordConfirm = document.getElementById("password-confirm").value;
+
+        updateSettings({passwordCurrent, password, passwordConfirm},'password');
+
     })
 }

@@ -41,7 +41,8 @@ export const logout = async()=>{
         
         if(res.data.status === 'success'){
             showAlert("success", "Log out successfully");
-            location.reload(true);
+            // location.reload(true);
+            window.location = '/'
 
         }
 
