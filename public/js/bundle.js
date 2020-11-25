@@ -8399,7 +8399,30 @@ module.exports.default = axios;
 
 },{"./utils":"../../node_modules/axios/lib/utils.js","./helpers/bind":"../../node_modules/axios/lib/helpers/bind.js","./core/Axios":"../../node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"../../node_modules/axios/lib/core/mergeConfig.js","./defaults":"../../node_modules/axios/lib/defaults.js","./cancel/Cancel":"../../node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"../../node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"../../node_modules/axios/lib/cancel/isCancel.js","./helpers/spread":"../../node_modules/axios/lib/helpers/spread.js"}],"../../node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"login.js":[function(require,module,exports) {
+},{"./lib/axios":"../../node_modules/axios/lib/axios.js"}],"alert.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.hideAlert = exports.showAlert = void 0;
+
+var showAlert = function showAlert(type, message) {
+  hideAlert();
+  var markup = "<div class=\"alert alert--".concat(type, "\">").concat(message, "</div>");
+  document.querySelector("body").insertAdjacentHTML("afterbegin", markup);
+  window.setTimeout(hideAlert, 5000);
+};
+
+exports.showAlert = showAlert;
+
+var hideAlert = function hideAlert() {
+  var el = document.querySelector(".alert");
+  if (el) el.parentElement.removeChild(el);
+};
+
+exports.hideAlert = hideAlert;
+},{}],"login.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8408,6 +8431,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.login = void 0;
 
 var _axios = _interopRequireDefault(require("axios"));
+
+var _alert = require("./alert");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8439,7 +8464,8 @@ var login = /*#__PURE__*/function () {
 
             if (res.data.status === 'success') {
               // alert('Logged successfully');
-              //redirect 
+              (0, _alert.showAlert)('success', 'Logged in successfully'); //redirect 
+
               window.setTimeout(function () {
                 location.assign("/");
               }, 500);
@@ -8452,7 +8478,7 @@ var login = /*#__PURE__*/function () {
             _context.prev = 8;
             _context.t0 = _context["catch"](1);
             console.log("🚀 ~ file: login.js ~ line 20 ~ login ~ error", _context.t0.response.data);
-            alert(_context.t0.response.data.message);
+            (0, _alert.showAlert)('error', _context.t0.response.data.message);
 
           case 12:
           case "end":
@@ -8468,7 +8494,7 @@ var login = /*#__PURE__*/function () {
 }();
 
 exports.login = login;
-},{"axios":"../../node_modules/axios/index.js"}],"mapBox.js":[function(require,module,exports) {
+},{"axios":"../../node_modules/axios/index.js","./alert":"alert.js"}],"mapBox.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

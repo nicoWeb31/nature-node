@@ -1,5 +1,6 @@
 import { login } from "./login";
 import { displayMap } from "./mapBox";
+
 import "@babel/polyfill";
 
 //Dom element
