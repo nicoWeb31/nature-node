@@ -122,6 +122,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     //grant access to protected route
     console.log(currentUser);
     req.user = currentUser; //on passe le current user au middleware suivant !
+
+    //res.locals is always axessible by PUG, easy to use
+    res.locals.user = currentUser;
+
     next();
 });
 

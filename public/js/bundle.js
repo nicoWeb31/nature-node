@@ -8854,7 +8854,7 @@ var _mapBox = require("./mapBox");
 //Dom element
 //recuperate data info expose in html
 var mapBox = document.getElementById("map");
-var loginForm = document.querySelector(".form");
+var loginForm = document.querySelector(".formMod");
 var logoutButton = document.querySelector(".nav__el--logout"); //delegation
 
 if (mapBox) {

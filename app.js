@@ -56,8 +56,10 @@ app.use("/api", limiter);
 
 //parser limit for security
 app.use(express.json({ limit: "10kb" }));
-
+app.use(express.urlencoded({extended: true,limit:'10kb'}));//for form
 app.use(cookieParser());
+
+
 
 //Data sanatization against noSql injection
 app.use(mongoSanitize());

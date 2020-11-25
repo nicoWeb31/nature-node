@@ -7,7 +7,7 @@ import "@babel/polyfill";
 //recuperate data info expose in html
 
 const mapBox = document.getElementById("map");
-const loginForm = document.querySelector(".form");
+const loginForm = document.querySelector(".formMod");
 const logoutButton = document.querySelector(".nav__el--logout");
 
 //delegation
