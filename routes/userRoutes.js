@@ -3,11 +3,17 @@ const router = express.Router();
 const userController = require("./../controllers/controllerUser");
 const authController = require("./../controllers/authController");
 
+
+
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.get("/logout", authController.logout);
 router.post("/forgotPassword", authController.forgotPassword);
 router.patch("/resetPassord/:token", authController.resetPassword);
+
+
+
+
 
 //middleware run in frenquence
 //si je met une protect route ici toute les routes apres seront proteger
@@ -15,7 +21,7 @@ router.patch("/resetPassord/:token", authController.resetPassword);
 router.use(authController.protect); //middlware protect
 
 router.patch("/updateMyPassword", authController.upadtePassword);
-router.patch("/updateMe", userController.updateMe);
+router.patch("/updateMe",userController.uploadMulter,userController.updateMe);
 router.delete("/deleteMe", userController.deleteMe);
 
 router.get(

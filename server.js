@@ -22,6 +22,7 @@ mongoose.connect(db,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     autoIndex: true,
+    useFindAndModify:false
 }).then(con=>{
     //console.log(con.connections)
     console.log('connect to mongodb 🙂 ')

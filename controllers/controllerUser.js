@@ -1,7 +1,15 @@
 const User = require('./../models/userModel')
 const catchAsync = require('./../utils/catchAsync')
 const AppErr = require("./../utils/AppErr");
-const factory = require("./handlerFactory")
+const factory = require("./handlerFactory");
+const multer = require('multer');
+
+
+
+//multer
+const upload = multer({dest: 'public/img/users'})
+
+exports.uploadMulter = upload.single('photo')
 
 
 const filterObj =(obj, ...allowedFields)=>{
@@ -39,6 +47,9 @@ exports.getAllUsuers = factory.getAll(User);
 
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+
+    console.log(req.file)
+    console.log(req.body)
     //1 create error if user post password data
     if(req.body.password || req.body.confirmPassword) {
         return next(new AppErr('This route is not for password updte, please use /updateMyPassword', 400));
