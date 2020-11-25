@@ -5,6 +5,7 @@ import { hideAlert, showAlert } from "./alert";
 export const updateSettings = async (data, type) => {
     //type is either password or data,
     try {
+        console.log("🚀 ~ file: updateSettings.js ~ line 30 ~ updateSettings ~ data", data)
         const url =
             type === "password"
                 ? "http://localhost:3003/api/v1/users/updateMypassword"
@@ -13,7 +14,7 @@ export const updateSettings = async (data, type) => {
         const res = await axios({
             method: "PATCH",
             url,
-            data,
+            data
         });
         if (res.data.status === "success") {
             showAlert("success", `${type.toUpperCase()} Update with successfully`);

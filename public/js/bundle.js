@@ -8613,15 +8613,16 @@ var updateSettings = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
+            console.log("🚀 ~ file: updateSettings.js ~ line 30 ~ updateSettings ~ data", data);
             url = type === "password" ? "http://localhost:3003/api/v1/users/updateMypassword" : "http://localhost:3003/api/v1/users/updateMe";
-            _context.next = 4;
+            _context.next = 5;
             return (0, _axios.default)({
               method: "PATCH",
               url: url,
               data: data
             });
 
-          case 4:
+          case 5:
             res = _context.sent;
 
             if (res.data.status === "success") {
@@ -8629,21 +8630,21 @@ var updateSettings = /*#__PURE__*/function () {
               window.location = "/me";
             }
 
-            _context.next = 12;
+            _context.next = 13;
             break;
 
-          case 8:
-            _context.prev = 8;
+          case 9:
+            _context.prev = 9;
             _context.t0 = _context["catch"](0);
             (0, _alert.showAlert)("error", _context.t0.res.data.message);
             console.log("🚀 ~ file: updateSettings.js ~ line 24 ~ updateUser ~ error", _context.t0);
 
-          case 12:
+          case 13:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 8]]);
+    }, _callee, null, [[0, 9]]);
   }));
 
   return function updateSettings(_x, _x2) {
@@ -8976,12 +8977,12 @@ if (logoutButton) {
 if (formSettings) {
   formSettings.addEventListener("submit", function (e) {
     e.preventDefault();
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    (0, _updateSettings.updateSettings)({
-      name: name,
-      email: email
-    }, 'data');
+    var form = new FormData();
+    form.append('name', document.getElementById("name").value);
+    form.append('email', document.getElementById("email").value);
+    form.append('photo', document.getElementById("photo").files[0]);
+    console.log(form);
+    (0, _updateSettings.updateSettings)(form, 'data');
   });
 }
 
@@ -9052,7 +9053,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41769" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35073" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

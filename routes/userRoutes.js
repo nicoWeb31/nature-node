@@ -21,7 +21,7 @@ router.patch("/resetPassord/:token", authController.resetPassword);
 router.use(authController.protect); //middlware protect
 
 router.patch("/updateMyPassword", authController.upadtePassword);
-router.patch("/updateMe",userController.uploadMulter,userController.updateMe);
+router.patch("/updateMe",userController.uploadMulter,userController.resizePhoto,userController.updateMe);
 router.delete("/deleteMe", userController.deleteMe);
 
 router.get(

@@ -18,6 +18,7 @@ const userShema = new Shema({
     },
     photo: {
         type: String,
+        default:'default.jpg'
     },
     role: {
         type: String,
