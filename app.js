@@ -8,7 +8,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const path = require("path");
-
+const cookieParser = require("cookie-parser");
 
 //views engine
 app.set("view engine", "pug");
@@ -26,6 +26,26 @@ if (process.env.NODE_ENV !== "production") {
     app.use(morgan("dev"));
 }
 
+// app.use(
+//     cors({
+//         origin: "http://localhost:3003",
+//         credentials: true,
+//     })
+// );
+// // Set Security HTTP headers
+// // app.use(helmet()) -> This is old helmet declartion.
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'", "https:", "http:", "data:", "ws:"],
+            baseUri: ["'self'"],
+            fontSrc: ["'self'", "https:", "http:", "data:"],
+            scriptSrc: ["'self'", "https:", "http:", "blob:"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https:", "http:"],
+        },
+    })
+);
+
 //limiter le nbre de requet---securité-----
 const limiter = rateLimit({
     max: 100,
@@ -36,6 +56,8 @@ app.use("/api", limiter);
 
 //parser limit for security
 app.use(express.json({ limit: "10kb" }));
+
+app.use(cookieParser());
 
 //Data sanatization against noSql injection
 app.use(mongoSanitize());
@@ -66,11 +88,12 @@ app.use((req, res, next) => {
 //test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
+    console.log(req.cookies)
     next();
 });
 
 //------------------ROUTE RENDER -------------------------------
-app.use("/", require("./routes/viewsRoute"))
+app.use("/", require("./routes/viewsRoute"));
 
 //------------------ROUTES Api---------------------------
 app.use("/api/v1/tours", require("./routes/tourRoutes"));
