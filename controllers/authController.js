@@ -82,7 +82,7 @@ exports.protect = catchAsync(async (req, res, next) => {
         req.headers.authorization.startsWith("Bearer")
     ) {
         token = req.headers.authorization.split(" ")[1];
-    }else if(req.cookies.jwt){
+    } else if (req.cookies.jwt) {
         token = req.cookies.jwt;
     }
 
@@ -120,8 +120,40 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     //grant access to protected route
-    console.log(currentUser)
+    console.log(currentUser);
     req.user = currentUser; //on passe le current user au middleware suivant !
+    next();
+});
+
+//only for render page show if user is logged, use for rendering
+exports.isLogin = catchAsync(async (req, res, next) => {
+    console.log("IS LOGIN ?");
+
+    if (req.cookies.jwt) {
+        //verifie token
+        const decoded = await promisify(jwt.verify)(
+            req.cookies.jwt,
+            process.env.JWT_SECRET
+        );
+
+        //check if user exist
+        const currentUser = await User.findById(decoded.id);
+        if (!currentUser) {
+            return next();
+        }
+
+        //check if user user changed passord after the token was issued
+        if (currentUser.changePassAflter(decoded.iat)) {
+            return next();
+        }
+
+        //there is log in
+        //res.locals is always axessible by PUG, easy to use
+        res.locals.user = currentUser;
+
+        return next();
+    }
+
     next();
 });
 

@@ -1,14 +1,8 @@
+import axios from 'axios';
 
+export const  login = async (email, password) => {
 
-const login = async (email, password) => {
-    console.log(
-        "🚀 ~ file: login.js ~ line 12 ~ document.querySelector ~ email",
-        email
-    );
-    console.log(
-        "🚀 ~ file: login.js ~ line 13 ~ document.querySelector ~ password",
-        password
-    );
+    console.log("🚀 ~ file: login.js ~ line 30 ~ login ~ email", email)
 
     try {
         const res = await axios({
@@ -20,18 +14,18 @@ const login = async (email, password) => {
             },
         });
 
-        console.log(res);
+        if(res.data.status === 'success'){
+            // alert('Logged successfully');
+            //redirect 
+            window.setTimeout(()=>{
+                location.assign("/");
+            },500)
+        }
+
     } catch (error) {
         console.log("🚀 ~ file: login.js ~ line 20 ~ login ~ error", error.response.data);
+        alert(error.response.data.message);
+
     }
 };
 
-//select form elements
-document.querySelector(".form").addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    login(email,password);
-});
