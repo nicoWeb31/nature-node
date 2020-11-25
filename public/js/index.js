@@ -22,13 +22,16 @@ if (mapBox) {
 }
 
 if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async(e) => {
         e.preventDefault();
 
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
 
-        login(email, password);
+        await login(email, password);
+        document.getElementById("email").value = '';
+        document.getElementById("password").value = '';
+        
     });
 }
 
@@ -47,14 +50,19 @@ if(formSettings){
 }
 
 if(formPasswordSettings){
-    formPasswordSettings.addEventListener("submit", (e)=>{
+    formPasswordSettings.addEventListener("submit", async(e)=>{
         e.preventDefault();
+        document.querySelector('.btn--save-password').textContent = 'Updating....'
 
         const passwordCurrent = document.getElementById("password-current").value;
         const password = document.getElementById("password").value;
         const passwordConfirm = document.getElementById("password-confirm").value;
 
-        updateSettings({passwordCurrent, password, passwordConfirm},'password');
+        await updateSettings({passwordCurrent, password, passwordConfirm},'password');
+        document.getElementById("password-current").value = '';
+        document.getElementById("password").value = '';
+        document.getElementById("password-confirm").value = '';
+        document.querySelector('.btn--save-password').textContent = 'Save Password'
 
     })
 }
