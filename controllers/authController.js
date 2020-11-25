@@ -125,37 +125,54 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 });
 
+//logout reecrit sur le cookies sans le token
+exports.logout = (req, res, next) => {
+    res.cookie("jwt", "loggedout", {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true,
+    });
+    res.status(200).json({
+        status: "success",
+    });
+
+    next();
+};
+
 //only for render page show if user is logged, use for rendering
-exports.isLogin = catchAsync(async (req, res, next) => {
+exports.isLogin = async (req, res, next) => {
     console.log("IS LOGIN ?");
 
     if (req.cookies.jwt) {
-        //verifie token
-        const decoded = await promisify(jwt.verify)(
-            req.cookies.jwt,
-            process.env.JWT_SECRET
-        );
+        try {
+            //verifie token
+            const decoded = await promisify(jwt.verify)(
+                req.cookies.jwt,
+                process.env.JWT_SECRET
+            );
 
-        //check if user exist
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) {
+            //check if user exist
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return next();
+            }
+
+            //check if user user changed passord after the token was issued
+            if (currentUser.changePassAflter(decoded.iat)) {
+                return next();
+            }
+
+            //there is log in
+            //res.locals is always axessible by PUG, easy to use
+            res.locals.user = currentUser;
+
+            return next();
+        } catch (error) {
             return next();
         }
-
-        //check if user user changed passord after the token was issued
-        if (currentUser.changePassAflter(decoded.iat)) {
-            return next();
-        }
-
-        //there is log in
-        //res.locals is always axessible by PUG, easy to use
-        res.locals.user = currentUser;
-
-        return next();
     }
 
     next();
-});
+};
 
 exports.restrictTo = (...roles) => (req, res, next) => {
     //role is an array['admin','lead-guide'] role  = 'user'

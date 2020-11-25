@@ -1,5 +1,6 @@
 const Tour = require("./../models/tourModel")
 const catchAsync = require('./../utils/catchAsync')
+const AppErr = require("./../utils/AppErr");
 
 
 exports.getOverview = catchAsync(async(req, res, next) => {
@@ -15,7 +16,7 @@ exports.getOverview = catchAsync(async(req, res, next) => {
     });
 });
 
-exports.getOneTour = catchAsync(async(req, res) => {
+exports.getOneTour = catchAsync(async(req, res,next) => {
 
     //1 get the data (include the tour guide, and reviews)
     const slug = req.params.slug;
@@ -25,6 +26,10 @@ exports.getOneTour = catchAsync(async(req, res) => {
     })
     // console.log("🚀 ~ file: viewsController.js ~ line 26 ~ tour ~ tour", tour.reviews.user)
 
+
+    if(!tour){
+        return next(new AppErr('There is no tour find with this name ! ', 404))
+    }
 
     res.status(200)
     .set(
