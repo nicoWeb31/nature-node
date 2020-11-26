@@ -14,7 +14,13 @@ module.exports = class Emailer {
     NewCreateTransport() {
         if (process.env.NODE_ENV === "production") {
             //TODO: Implement sendGrid
-            return 1;
+            return nodemailer.createTransport({
+                service: 'SendGrid',
+                auth:{
+                    user: process.env.API_KEY_NAME,
+                    pass: process.env.API_KEY_SERNDGRID,
+                }
+            })
         }
 
         return nodemailer.createTransport({

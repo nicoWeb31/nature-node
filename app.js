@@ -101,6 +101,8 @@ app.use("/", require("./routes/viewsRoute"));
 app.use("/api/v1/tours", require("./routes/tourRoutes"));
 app.use("/api/v1/users", require("./routes/userRoutes"));
 app.use("/api/v1/reviews", require("./routes/reviewsRoutes"));
+app.use("/api/v1/bookings", require("./routes/bookingsRoute"));
+
 
 //autres route 404
 app.all("*", function (req, res, next) {
