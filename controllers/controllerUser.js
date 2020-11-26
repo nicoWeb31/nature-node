@@ -36,13 +36,13 @@ const upload = multer({
 exports.uploadMulter = upload.single("photo");
 
 //resize photo with sharp libreary
-exports.resizePhoto = (req,res, next)=>{
+exports.resizePhoto = catchAsync(async(req,res, next)=>{
     if(!req.file) return next();
     
     //after buffer set in req
     req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
     
-    sharp(req.file.buffer)
+    await sharp(req.file.buffer)
     .resize(500,500)
     .toFormat('jpeg')
     .jpeg({quality: 90})
@@ -51,7 +51,7 @@ exports.resizePhoto = (req,res, next)=>{
     console.log(req.file)
     next();
     
-}
+})
 
 //////////////////// FIN MULTER /////////////////////////////////////
 

@@ -2,6 +2,94 @@ const Tour = require("./../models/tourModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppErr = require("./../utils/AppErr");
 const factory = require("./handlerFactory");
+const multer = require("multer");
+const sharp = require("sharp");
+
+////////////////MULER----------------------------
+const multerSorage = multer.memoryStorage();
+
+//filter
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image")) {
+        cb(null, true);
+    } else cb(new AppErr("Not a valid format for image ! ", 400), false);
+};
+
+//multer midllware
+const upload = multer({
+    storage: multerSorage,
+    fileFilter: multerFilter,
+});
+
+//multiple upload multiple fields
+exports.uploadTourImage = upload.fields([
+    { name: "imageCover", maxCount: 1 },
+    { name: "images", maxCount: 3 },
+]);
+
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+    console.log(req.files);
+
+    if (!req.files.imageCover || !req.files.images) {
+        return next();
+    }
+
+    //1)coverImage
+    const imagCoverFileName = `tour-${
+        req.params.id
+    }-${Date.now()}-coverImage.jpeg`;
+
+    await sharp(req.files.imageCover[0].buffer)
+        .resize(2000, 1333)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${imagCoverFileName}`);
+    //put the file in req body
+    req.body.imageCover = imagCoverFileName;
+
+    //images
+    req.body.images = [];
+
+    await Promise.all(
+        req.files.images.map(async (file, i) => {
+            const fileName = `tour-${req.params.id}-${Date.now()}-images${
+                i + 1
+            }.jpg`;
+
+            await sharp(file.buffer)
+                .resize(2000, 1333)
+                .toFormat("jpeg")
+                .jpeg({ quality: 90 })
+                .toFile(`public/img/tours/${fileName}`);
+            //put the file in req body
+            req.body.images.push(fileName);
+        })
+    );
+
+    next();
+});
+// //resize photo with sharp libreary
+// exports.resizePhoto = catchAsync(async(req,res, next)=>{
+//     if(!req.file) return next();
+
+//     //after buffer set in req
+//     req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
+
+//     await sharp(req.file.buffer)
+//     .resize(500,500)
+//     .toFormat('jpeg')
+//     .jpeg({quality: 90})
+//     .toFile(`public/img/users/${req.file.filename}`);
+
+//     console.log(req.file)
+//     next();
+
+// })
+
+//multiple upload
+//upload.array('images', 5)
+
+//////////////////////MULTER - FIN ///////////////////////////////
 
 ////////////////////////////-----middlewre-----//////////////////////////
 //plus utile id de mongo
@@ -205,7 +293,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
     const { latlng, unit } = req.params;
     const [lat, lng] = latlng.split(",");
 
-    const multiply = unit === 'mi' ? 0.000621371 : 0.001
+    const multiply = unit === "mi" ? 0.000621371 : 0.001;
 
     if (!lat || !lng) {
         return next(
@@ -225,11 +313,11 @@ exports.getDistances = catchAsync(async (req, res, next) => {
             },
         },
         {
-            $project :{
+            $project: {
                 distance: 1,
-                name: 1
-            }
-        }
+                name: 1,
+            },
+        },
     ]);
 
     res.status(200).json({
