@@ -2,12 +2,13 @@ const nodemailer = require("nodemailer");
 const pug = require('pug');
 const htmlToText = require('html-to-text');
 
-module.exorts = class Emailer {
+module.exports = class Emailer {
+
     constructor(user, url) {
         this.to = user.email;
-        this.firstName = user.firstName.split(" ")[0];
+        this.firstName = user.name.split(" ")[0];
         this.url = url;
-        this.from = `Riot Nicolas <${process.env.EMAIL_FROM}>`;
+        this.from = `Nicolas Riot <${process.env.EMAIL_FROM}>`;
     }
 
     NewCreateTransport() {
@@ -51,6 +52,13 @@ module.exorts = class Emailer {
     async sendWelcome(){
         await this.send('welcome', 'Welcome to the natour Familly !');
     }
+
+
+    async sendForgotPasswordReset(){
+        await this.send('passwordReset','Your password rest token valid for 10 minutes ! ')
+    }
+
+
 };
 
 // const sendEmail = async (options) => {
@@ -78,4 +86,4 @@ module.exorts = class Emailer {
 //     await transporter.sendMail(mailOptions);
 // };
 
-module.exports = sendEmail;
+// module.exports = sendEmail;

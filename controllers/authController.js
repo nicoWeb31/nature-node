@@ -3,7 +3,7 @@ const { promisify } = require("util");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppErr = require("./../utils/AppErr");
-const sendEmail = require("./../utils/email");
+const Emailer = require("./../utils/email");
 const crypto = require("crypto");
 // const bcrypt = require('bcryptjs')
 
@@ -48,6 +48,10 @@ exports.signup = catchAsync(async (req, res, next) => {
         passwordConfirm: req.body.passwordConfirm,
         role: req.body.role,
     });
+
+    const url = `${req.protocol}://${req.get("host")}/me`;
+
+    await new Emailer(newUser, url).sendWelcome();
 
     createSendToken(newUser, 201, res);
 });
@@ -178,6 +182,7 @@ exports.isLogin = async (req, res, next) => {
     next();
 };
 
+//////////////////////////////////////////////////////////
 exports.restrictTo = (...roles) => (req, res, next) => {
     //role is an array['admin','lead-guide'] role  = 'user'
     if (!roles.includes(req.user.role)) {
@@ -189,6 +194,7 @@ exports.restrictTo = (...roles) => (req, res, next) => {
     next();
 };
 
+///////////////////////////////////////////////////
 exports.forgotPassword = catchAsync(async (req, res, next) => {
     //1) Get user based on posted email
     const user = await User.findOne({ email: req.body.email });
@@ -203,18 +209,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     const reseToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    //3)send it to user's email
-    const resetUrl = `${req.protocol}://${req.host}/api/v1/users/resetPassord/${reseToken}`;
-
-    const message = `Forgot your password ? Submit a PATCH request with your new password and passwordConfirm to : ${resetUrl}...If you didn't forgot your password, 
-    please ignore this email`;
-
     try {
-        await sendEmail({
-            email: user.email,
-            subject: "your password reset token (valid 10m)",
-            message,
-        });
+        const resetUrl = `${req.protocol}://${req.host}/api/v1/users/resetPassord/${reseToken}`;
+        await new Emailer(user, resetUrl).sendForgotPasswordReset();
     } catch (error) {
         user.passwordRestToken = undefined;
         user.passwordRestExpires = undefined;
@@ -234,6 +231,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     });
 });
 
+///////////////////////////////////////////////////////////
 exports.resetPassword = catchAsync(async (req, res, next) => {
     // 1  get user based on the token des
     const hashedToken = crypto
