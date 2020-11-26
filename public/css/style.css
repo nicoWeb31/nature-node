@@ -438,8 +438,8 @@ body {
   padding-top: 14vw;
   padding-bottom: calc(1vw + var(--section-rotate));
   -webkit-box-flex: 0;
-  -ms-flex: 0 0 50%;
-  flex: 0 0 50%;
+  /* -ms-flex: 0 0 50%; */
+  /* flex: 0 0 50%; */
 }
 
 .description-box .description {
